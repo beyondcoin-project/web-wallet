@@ -181,8 +181,17 @@
 				}
 			}
 		</style>
-		<title>Wallet</title>
+		<title>Beyondcoin Wallet</title>
 		<meta name="description" content="Beyondcoin Web Wallet">
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-142187073-23"></script>
+		<script>
+		  window.dataLayer = window.dataLayer || [];
+		  function gtag(){dataLayer.push(arguments);}
+		  gtag('js', new Date());
+
+		  gtag('config', 'UA-142187073-23');
+		</script>
 	</head>
 	<body>
 		<!-- Navbar -->
@@ -482,13 +491,13 @@
 					"api": "https://api.beyondcoin.io",
 					"ticker": "BYND",
 					"decimals": 8,
-					"fee": 0.00000001,
+					"fee": 0.001,
 					"params": {
 						"satoshis": 100000000,
 						"decimals": 8,
-						"pub": 0x1C,
-						"multisig": 0x1E,
-						"priv": 0x80
+						"pub": 0x19,
+						"multisig": 0x5,
+						"priv": 0xB0
 					}
 				},
 				"TBYND": {
