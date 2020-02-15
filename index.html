@@ -185,12 +185,14 @@
 			.dark-mode {
 				background-color: black;
 				color: grey;
+				cursor: pointer;
 			}
 			#dark-mode-btn {
 				position: relative;
 				font-size: 35px;
 				color: lightgrey;
 				top: 0px;
+				cursor: pointer;
 			}
 			#togglebtn:active {
 				border-color: transparent;
@@ -245,7 +247,9 @@
 					<script>
 						function togglemode() {
 						   var element = document.body;
+						   var table = document.container;
 						   element.classList.toggle("dark-mode");
+						   table.classList.toggle("dark-mode");
 						}
 					</script>
 				</div>
@@ -301,7 +305,7 @@
 								<b>Notice:</b> Please make sure that you remember your account details, otherwise you may lose access to your funds.
 							</div>
 							<div class="footer-item tab-item d-none" data-tab="open-key">
-								Still don't have wallet? <a id="paper-wallet" href="#/create">Generate</a> it!
+								Still don't have a wallet? <a id="paper-wallet" href="#/create">Generate</a> it!
 							</div>
 						</div>
 					</div>
@@ -327,9 +331,11 @@
 						<div class="card-body">
 							<div class="text-center">
 								<div class="tab-item" data-tab="wallet-balance">
+									<h4 id="byndprice" class="byndprice mb-0 pb-0 c-pointer" align="right">Loading...</h4>
 									<div id="qr-code-addres" class="qr-code"></div>
 									<div id="wallet-address"></div>
 									<h3 class="wallet-balance mb-0 pb-0 c-pointer">Loading...</h3>
+									<h3 class="wallet-balance-usd mb-0 pb-0 c-pointer">Loading...</h3>
 									<div class="dropright mt-1">
 										<button class="btn btn-sm btn-default dropdown-toggle" type="button" id="address-type-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 											TYPE
@@ -2771,18 +2777,33 @@
 		<!-- All magic is here :D -->
 		<script>
 			/* Wallet functions */
+				$.getJSON("https://api.coingecko.com/api/v3/simple/price?ids=beyondcoin&vs_currencies=usd", function(price){
+					usdprice = price["usd"].toFixed(2);
+					//$("#byndprice").text(price["usd"].toFixed(2));
+				}).fail(function( dat, textStatus, error ) {
+				    var err = textStatus + ", " + error;
+					alert(err);
+				})
 
 			// Check wallet balance
 			function walletBalance() {
 				$(".wallet-balance").text("Loading...")
+				$(".wallet-balance-usd").text("Loading...")
+				$(".byndprice").text("Loading...")
 				coinjs.addressBalance($("#wallet-address").html(), function(data) {
 					data = JSON.parse(data)
+					usdprice = 0.0005
 					if(data.error == undefined) {
 						globalData.balance = data.result.balance
-						$(".wallet-balance").text(amountFormat(globalData.balance) + " " + getApi()["ticker"])
+						$(".wallet-balance").text(amountFormat(globalData.balance).toFixed(8) + " " + getApi()["ticker"])
+						$(".wallet-balance-usd").text('$' + amountFormat(globalData.balance * usdprice).toFixed(2)/** + " USD" **//** + " " + getApi()["ticker"]**/)
+						$(".byndprice").text("1 BYND = " + '$' + usdprice /**amountFormat(usdprice).toFixed(8)**/)
+						//$("#byndprice").text(price["usd"].toFixed(2));
 					} else {
 						showMessage("We couldn't load wallet balance")
 						$(".wallet-balance").text("0.00 " + getApi()["ticker"])
+						$(".wallet-balance-usd").text("0.00 " + getApi()["ticker"])
+						$(".byndprice").text("0.00 " + getApi()["ticker"])
 					}
 				});
 			}
@@ -2801,6 +2822,9 @@
 				clearTimeout(walletTimer);
 				walletTimer = setTimeout(function() {
 					if($(".wallet-balance").text() != "Loading...") {
+						walletBalance();
+					}
+					if($(".wallet-balance-usd").text() != "Loading...") {
 						walletBalance();
 					}
 					checkBalanceLoop();
@@ -3090,6 +3114,7 @@
 				// Check wallet balance on balance label click
 				$(".wallet-balance").click(function(e){
 					walletBalance()
+					getPrice()
 					e.preventDefault()
 				})
 
