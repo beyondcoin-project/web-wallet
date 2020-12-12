@@ -1,7 +1,5 @@
 # Beyondcoin Web Wallet
 
-Live version: https://beyondcoinwallet.com.
+Live version: https://wallet.beyondcoin.io.
 
 Web wallet based on Beyondcoin [ApiServer](https://github.com/beyondcoin-project/apiserver/).
-
-Forked from https://github.com/volbil/web-wallet
